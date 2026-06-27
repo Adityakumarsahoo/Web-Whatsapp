@@ -1,0 +1,131 @@
+import { useState, useMemo } from "react";
+import { Search, Smile, Cherry, Trees, TrainFront, Trophy, Lightbulb, Heading } from "lucide-react";
+import { motion } from "motion/react";
+
+interface EmojiPickerProps {
+  onSelectEmoji: (emoji: string) => void;
+}
+
+interface EmojiCategory {
+  name: string;
+  icon: any;
+  emojis: string[];
+}
+
+const EMOJI_DATA: EmojiCategory[] = [
+  {
+    name: "Smileys",
+    icon: Smile,
+    emojis: ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓", "😎", "🥸", "🤩", "🥳", "😏", "😒", "😞", "😔", "😟", "😕", "🙁", "☹️", "😣", "😖", "😫", "😩", "🥺", "😢", "😭", "😤", "😠", "😡", "🤬", "🤯", "😳", "🥵", "🥶", "😱", "😨", "😰", "😥", "😓", "🤗", "🤔", "🫣", "🤭", "🤫", "🤥", "😶", "😐", "😑", "😬", "🙄", "😯", "😦", "😧", "😮", "😲", "🥱", "😴", "🤤", "😪", "😵", "🤐", "🥴", "🤢", "🤮", "🤧", "😷", "🤒", "🤕", "🤑", "🤠", "😈", "👿", "👹", "👺", "🤡", "💩", "👻", "💀", "☠️", "👽", "👾", "🤖", "🎃", "😺", "😸", "😹", "😻", "😼", "😽", "🙀", "😿", "😾", "👋", "🤚", "🖐️", "✋", "🖖", "👌", "🤌", "🤏", "✌️", "🤞", "🫰", "🤟", "🤘", "🤙", "👈", "👉", "👆", "🖕", "👇", "☝️", "👍", "👎", "✊", "👊", "🤛", "🤜", "👏", "🙌", "👐", "🤲", "🤝", "🙏", "✍️", "💅", "🤳", "💪", "🦾", "🦿", "🦵", "🦶", "👂", "🦻", "👃", "🧠", "🫀", "🫁", "🦷", "🦴", "👀", "👁️", "👅", "👄", "💋", "🩸", "❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "🤍", "🤎", "💔", "❤️‍🔥", "❤️‍🩹", "❣️", "💕", "💞", "💓", "💗", "💖", "💘", "💝", "💟"]
+  },
+  {
+    name: "Animals",
+    icon: Trees,
+    emojis: ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐻‍❄️", "🐨", "🐯", "🦁", "🐮", "🐷", "🐽", "🐸", "🐵", "🙈", "🙉", "🙊", "🐒", "🐔", "🐧", "🐦", "🐤", "🐣", "🐥", "🦆", "🦅", "🦉", "🦇", "🐺", "🐗", "🐴", "🦄", "🐝", "🪱", "🐛", "🦋", "🐌", "🐞", "🐜", "🪰", "🪲", "🪳", "🦟", "🦗", "🕷️", "🕸️", "🦂", "🐢", "🐍", "🦎", "🦖", "🦕", "🐙", "🦑", "🦞", "🦀", "🐡", "🐠", "🐟", "🐬", "🐳", "🐋", "🦈", "🐊", "🐅", "🐆", "🦓", "🦍", "🦧", "🦣", "🐘", "🦛", "🦏", "🐪", "🐫", "🦒", "🦘", "🦬", "🐃", "🐂", "🐄", "🐎", "🐖", "🐏", "🐑", "🦙", "🐐", "🦌", "🐕", "🐩", "🦮", "🐕‍🦺", "🐈", "🐈‍⬛", "🐓", "🦃", "🦤", "🦚", "🦜", "🦢", "🦩", "🕊️", "🐇", "🦝", "🦨", "🦡", " beaver", "🦦", "🦥", "🐁", "🐀", "🐿️", "🦔", "🐉", "🐲", "🌵", "🎄", "🌲", "🌳", "🌴", "🪵", "🌱", "🌿", "☘️", "🍀", "🍁", "🍂", "🍃", "🍄", "🐚", "🪨"]
+  },
+  {
+    name: "Food",
+    icon: Cherry,
+    emojis: ["🍇", "🍈", "🍉", "🍊", "🍋", "🍌", "🍍", "🥭", "🍎", "🍏", " pear", "🍑", "🍒", "🍓", "🫐", "🥝", "🍅", "🫒", "🥥", "🥑", "🍆", "🥔", "🥕", "🌽", "🌶️", "🫑", " onion", " garlic", "🍄", "🥜", "🫘", "🌰", "🍞", "🥐", "🥖", "🫓", "🥨", "🥯", "🥞", " waffle", "🧀", "🍖", "🍗", "🥩", "🥓", "🍔", "🍟", "🍕", "🌭", "🥪", "🌮", "🌯", "🫔", "🥙", "🧆", "🍳", "🥘", "🍲", "🫕", "🥣", "🥗", "🍿", "🧈", "🧂", "🥫", "🍱", "🍘", "🍙", "🍚", "🍛", "🍜", "🍝", "🍠", "🍢", "🍣", "🍤", "🍥", "🦪", "🍡", "🥟", "🥠", "🥡", "🍦", "🍧", "🍨", "🍩", "🍪", "🎂", "🍰", "🧁", "🥧", "🍫", "🍬", "🍭", "🍮", "🍯", "🍼", "🥛", "☕", "🫖", "🍵", "🍶", "🍾", "🍷", "🍸", "🍹", "🍺", "🍻", "🥂", "🥃", "🥤", "🧋", "🧃", "🧉", "🧊", "🥢", "🍽️", "🍴", "🥄"]
+  },
+  {
+    name: "Travel",
+    icon: TrainFront,
+    emojis: ["🚗", "🚕", "🚙", "🚌", "🚎", "🏎️", "🚓", "🚑", "🚒", "🚐", "🛻", "🚚", "🚛", "🚜", "🛵", "🏍️", "🛺", "🚲", "🛴", "🛹", "🛞", "🚨", "🚔", "🚍", "🚘", "🚖", "🚡", "🚠", "🚟", "🚃", "🚋", "🚞", "🚝", "🚄", "🚅", "🚈", "🚂", "🚆", "🚇", "🚊", "🚉", "✈️", "🛫", "🛬", "🛩️", "🛪", "🛰️", "🚀", "🛸", "🚁", "🛶", "⛵", "🚤", "🛥️", "🛳️", "⛴️", "🚢", "⚓", "🛟", "🗺️", "🧭", "🏔️", "⛰️", "🌋", "🗻", "🏕️", "🏖️", "🏜️", "🏝️", "🏞️", "🏟️", "🏛️", "🏗️", "🧱", "🏘️", "🏚️", "🏠", "🏡", "🏢", "🏣", "🏤", "🏥", "🏦", "🏨", "🏩", "🏪", "🏫", "🏬", "🏭", "🏯", "🏰", "💒", "🗼", "🗽", "🕌", "🕌", "🛕", "🕍", "🕋", "⛩️", "⛲", "⛺", "🌁", "🌃", "🏙️", "🌄", "🌅", "🌆", "🌇", "🌉", "🎠", "🎡", "🎢", "🚂", "💈", "🎪"]
+  },
+  {
+    name: "Activities",
+    icon: Trophy,
+    emojis: ["👾", "🎮", "🕹️", "🎰", "🎲", "🧩", "🎯", "🎳", "🎮", "🎸", "🎺", "🥁", "🎻", "🎬", "🎨", "🎭", "🎪", "🎤", "🎧", "🎨", "🧶", "🧵", "🪡", "⚽", "🏀", "🏈", "⚾", "🥎", "🎾", "🏐", "🏉", "🥏", "🎱", "🪀", "🏓", "🏸", "🏒", "🏑", "🥍", "🏏", "🪃", "🥅", "⛳", "🪁", "🏹", "🎣", "🤿", "🥊", "🥋", "🎽", "🛹", "🛼", " sled", "⛷️", "🎿", "🏂", "🏋️", "🤼", "🤸", "⛹️", "🤺", "🤾", "🏌️", "🏇", "🧘", "🏄", "🏊", "🤽", "🚣", "🧗", "🚴", "🚵", "🏆", "🥇", "🥈", "🥉", "🏅", "🎖️", "🎫", "🎟️", "🎗️", "🏵️", "🩰"]
+  },
+  {
+    name: "Objects",
+    icon: Lightbulb,
+    emojis: ["⌚", "📱", "📲", "💻", "⌨️", "🖱️", "🖲️", "🖥️", "🖨️", "🖱️", "📀", "📼", "📷", "📸", "📹", "🎥", "📽️", "🎞️", "📞", "☎️", "📟", "📠", "📺", "📻", "🎙️", "🎚️", "🎛️", "🧭", "⏱️", "⏲️", "⏰", "⏳", "⌛", "📡", "🔋", "🔌", "💡", "🔦", "🕯️", "🪔", "🗑️", "🛢️", "💸", "💵", "💴", "💶", "💷", "🪙", "💰", "💳", "💎", "⚖️", "🪜", " toolbox", "🪛", "🔧", "🔨", "⚒️", "🛠️", "⛏️", "🪓", "⚙️", "🧱", "⛓️", "🧲", "🔫", "💣", "🛡️", "⚔️", "🗡️", "🪃", "🏹", "🏺", "🔮", "📿", "🧿", "💈", "🛎️", "🔑", "🗝️", "🚪", "🪟", "🛋️", "🛏️", "🪑", "🚽", "🪠", "🚿", "🛁", "🛁", "🧼", "🪒", "🧴", "🧽", "🪞", " broom", "🧹", "🧺", "🧻", "🧸", "🩹", "🩺", "🧪", "🧫", "🔬", "🔭", "📡", "💉", "🩸", "💊", "🩹", "🏷️", "🔖", "🔑", "🗝️", "🪃"]
+  },
+  {
+    name: "Symbols",
+    icon: Heading,
+    emojis: ["💘", "❤️", "💔", "💕", "💖", "💗", "💙", "💚", "💛", "💜", "🖤", "🤍", "🤎", "🧡", "💯", "💢", "💥", "💫", "💦", "💨", "🕳️", "💣", "💬", "👁️‍🗨️", "🗨️", "🗯️", "💭", "💤", "🌐", "🌀", "⭐", "🌟", "✨", "⚡", "☄️", "💥", "🔥", "🌈", "☀️", "🌤️", "⛅", "🌥️", "☁️", "🌦️", "🌧️", "🌨️", "🌩️", "🌪️", "🌫️", "🌬️", "🌊", "☔", "💧", "💤", "🚭", "🚯", "🚳", "🚱", "🚷", "🚸", "🚫", "⚠️", "🚸", "⛔", "❇️", "✳️", "❎", "✅", "🟩", "🟨", "🟧", "🟥", "🟪", "🟦", "🟫", "⬛", "⬜", "🏁", "🚩", "🎌", "🏴", "🏳️"]
+  }
+];
+
+export default function EmojiPicker({ onSelectEmoji }: EmojiPickerProps) {
+  const [activeTab, setActiveTab] = useState<string>("Smileys");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const filteredEmojis = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return EMOJI_DATA.find(c => c.name === activeTab)?.emojis || [];
+    }
+    const q = searchQuery.toLowerCase();
+    // Search across all categories
+    return EMOJI_DATA.flatMap(c => c.emojis).filter(emoji => {
+      // Direct emoji check is basic, but we can do a match
+      return emoji === q || emoji.indexOf(q) !== -1;
+    });
+  }, [activeTab, searchQuery]);
+
+  return (
+    <div id="emoji-picker-container" className="flex flex-col h-64 bg-[#1f2c34] border border-[#2f3b43] rounded-2xl overflow-hidden shadow-2xl glass-panel">
+      {/* Search Input */}
+      <div className="p-3 border-b border-[#2a373f] flex items-center gap-2 bg-[#111b21]">
+        <Search className="text-[#8696a0] w-4 h-4" />
+        <input
+          type="text"
+          placeholder="Search emoji"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="bg-transparent text-sm text-[#e9edef] placeholder-[#8696a0] outline-none w-full"
+        />
+      </div>
+
+      {/* Emoji Grid */}
+      <div className="flex-1 overflow-y-auto p-3 grid grid-cols-8 gap-2 justify-items-center">
+        {filteredEmojis.length > 0 ? (
+          filteredEmojis.map((emoji, index) => (
+            <button
+              key={`${emoji}-${index}`}
+              onClick={() => onSelectEmoji(emoji)}
+              className="text-2xl hover:scale-125 hover:bg-[#202c33] p-1.5 rounded-lg transition-all duration-150 active:scale-95 cursor-pointer"
+            >
+              {emoji}
+            </button>
+          ))
+        ) : (
+          <div className="col-span-8 text-center text-xs text-[#8696a0] py-8 font-sans">
+            No emojis found.
+          </div>
+        )}
+      </div>
+
+      {/* Tabs */}
+      {!searchQuery && (
+        <div className="flex items-center justify-around border-t border-[#2a373f] bg-[#111b21] py-2">
+          {EMOJI_DATA.map((cat) => {
+            const Icon = cat.icon;
+            const isActive = activeTab === cat.name;
+            return (
+              <button
+                key={cat.name}
+                onClick={() => setActiveTab(cat.name)}
+                title={cat.name}
+                className={`p-2 rounded-full transition-all relative ${
+                  isActive ? "text-[#00a884] bg-[#202c33]" : "text-[#8696a0] hover:text-[#e9edef] hover:bg-[#202c33]"
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                {isActive && (
+                  <motion.div
+                    layoutId="activeEmojiTab"
+                    className="absolute bottom-0 left-1/4 right-1/4 h-0.5 bg-[#00a884] rounded-full"
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

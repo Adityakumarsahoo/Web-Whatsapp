@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Custom Premium WhatsApp Theme Variables */
+:root {
+  --wa-primary: #00a884;
+  --wa-primary-hover: #008f72;
+  --wa-bg-dark: #0b141a;
+  --wa-bg-dark-secondary: #111b21;
+  --wa-bg-dark-active: #202c33;
+  --wa-border-dark: #222e35;
+  --wa-text-muted: #8696a0;
+  --wa-text-light: #e9edef;
+  --wa-chat-bubble-outgoing: #005c4b;
+  --wa-chat-bubble-incoming: #202c33;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(134, 150, 160, 0.15);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(134, 150, 160, 0.3);
+}
+
+/* Glassmorphism Accents */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-panel-light {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Audio Player Animations */
+@keyframes pulseWave {
+  0%, 100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.animate-wave-bar {
+  animation: pulseWave 1s ease-in-out infinite;
+}
+
+/* Custom utility classes */
+.whatsapp-gradient {
+  background: linear-gradient(135deg, #00a884 0%, #128c7e 100%);
+}
+
+.chat-bg-pattern {
+  background-color: #0b141a;
+  background-image: radial-gradient(rgba(0, 168, 132, 0.08) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.chat-bg-pattern-light {
+  background-color: #efeae2;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 20px 20px;
+}

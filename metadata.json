@@ -1,0 +1,6 @@
+{
+  "name": "WhatsApp Clone",
+  "description": "A full-stack, ultra-premium WhatsApp Web clone with real-time messaging, end-to-end encryption, status updates, voice notes, sticker system, calling UI, and admin dashboard.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
